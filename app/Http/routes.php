@@ -12,10 +12,15 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->welcome();
+    //return $app->welcome();
+    echo "hola";
 });
 
+//User Routes
 
-$app->get('user/{id}', 'Controller@greet');
+$app->post('user/login', 'Users@login');
 
-$app->post('user/login', 'Controller@login');
+
+// Dashboard routes
+
+$app->get('dashboard/data', 'Dashboard@getData');

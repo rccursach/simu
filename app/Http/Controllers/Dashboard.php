@@ -21,11 +21,12 @@ class Dashboard extends BaseController
                 "data" => null,
                 "error" => "Usuario no encontrado"
             ];
-            return json_encode($out);
         }
-
-        $out = [
-            "data" => $data
-        ];
+        else{
+            $out = [
+                "data" => $data
+            ];
+        }
+        return json_encode($out);
     }
 }

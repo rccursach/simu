@@ -48,8 +48,8 @@ namespace App;
       }
       else {
         //ronda actual
-        $actual = DB::select( 'SELECT * FROM sim_ronda_usuario WHERE completada = "no" AND sim_usuarios_id = '.$id_usuario.' ORDER BY sim_rondas_id ASC LIMIT 0,1' );
-        $datos["ronda_actual"] = $actual["sim_rondas_id"];  
+        $actual = DB::select( 'SELECT * FROM sim_ronda_usuario WHERE completada = "no" AND sim_usuarios_id = '.$id_usuario.' ORDER BY sim_rondas_id ASC LIMIT 0,1' )[0];
+        $datos["ronda_actual"] = $actual->sim_rondas_id;
       }
       
       //entrgegamos los ejercicios de la ronda desordenados
@@ -59,17 +59,17 @@ namespace App;
       $dialogos = DB::select('SELECT * FROM sim_dialogos where disponible = 1');
 
       foreach($dialogos as $dialogosAux) {
-        $arrDialogosImg[$dialogosAux["id"]] = $dialogosAux["imagen"];
-        $arrDialogosTD[$dialogosAux["id"]] = $dialogosAux["sim_tipo_dialogo_id"];   
+        $arrDialogosImg[$dialogosAux->id] = $dialogosAux->imagen;
+        $arrDialogosTD[$dialogosAux->id] = $dialogosAux->sim_tipo_dialogo_id;
       }
       
 
-      $rondas = generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 4);
-      $rondas = generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 7);
-      $rondas = generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 10);
-      $rondas = generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 11);
+      $rondas = $this->generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 4);
+      $rondas = $this->generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 7);
+      $rondas = $this->generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 10);
+      $rondas = $this->generaRondaRefuerzo($id_usuario, $rondas, $arrDialogosTD, $idRonda = 11);
 
-      $nuevaRonda = desordenaRonda($rondas);
+      $nuevaRonda = $this->desordenaRonda($rondas);
 
       
       foreach($nuevaRonda as $i => $nuevaRondaAux) {
@@ -93,7 +93,7 @@ namespace App;
     private function desordenaRonda($rondas){
       if(is_array($rondas)){
         foreach($rondas as $rondasAux){
-          $nuevaRondaAux[$rondasAux["sim_rondas_id"]] = explode(",",$rondasAux["sim_preguntas_id"]);
+          $nuevaRondaAux[$rondasAux->sim_rondas_id] = explode(",",$rondasAux->sim_preguntas_id);
         }
         
         foreach($nuevaRondaAux as $index=>$rondasAux){
@@ -281,13 +281,13 @@ namespace App;
       
       if(count($historial)>1){
         foreach($historial as $key=>$hist){
-          $hist["porcentaje"] = $hist["correctas"]/$hist["total"];
+          $hist->porcentaje = $hist->correctas/$hist->total;
           $historialAux[] = $hist;
         }
         
         //ordenamos por las mas erradas
         foreach ($historialAux as $clave => $fila) {
-          $porcent[$clave] = $fila['porcentaje'];
+          $porcent[$clave] = $fila->porcentaje;
         }     
         array_multisort($porcent, SORT_ASC, $historialAux);
         
@@ -296,20 +296,20 @@ namespace App;
         
         //ahora de esos 7 más bajo, debo ver que ejercicio me queda disponible
         foreach($arregloFinal[0] as $arregloFinalAux){
-          $arrTP[] = $arregloFinalAux["tipo_dialogo"];
+          $arrTP[] = $arregloFinalAux->tipo_dialogo;
         }
         
-        $arrDialogos = explode(",",$rondas[$idRonda-1]["sim_preguntas_id"]);
+        $arrDialogos = explode(",",$rondas[$idRonda-1]->sim_preguntas_id);
         $cadenaRef = "";
         foreach($arrDialogos as $arrDialogosAux){
           if(in_array($arrDialogosTD[$arrDialogosAux],$arrTP)){
             $cadenaRef.=$arrDialogosAux.",";
           } 
         }
-        $rondas[$idRonda-1]["sim_preguntas_id"] = substr($cadenaRef,0,-1);
+        $rondas[$idRonda-1]->sim_preguntas_id = substr($cadenaRef,0,-1);
       }   
       else{
-        $rondas[$idRonda-1]["sim_preguntas_id"] = "";
+        $rondas[$idRonda-1]->sim_preguntas_id = "";
       }
       
       return $rondas;

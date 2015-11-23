@@ -23,4 +23,4 @@ $app->post('user/login', 'Users@login');
 
 // Dashboard routes
 
-$app->get('dashboard/data', 'Dashboard@getData');
+$app->get('dashboard/getdata', 'Dashboard@getData');

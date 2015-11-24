@@ -24,3 +24,9 @@ $app->post('user/login', 'Users@login');
 // Dashboard routes
 
 $app->get('dashboard/getdata', 'Dashboard@getData');
+
+
+//$app->group(['prefix' => 'tracking'], function ($app) {
+    $app->post('tracking/juego', 'Tracking@juego');
+    $app->post('tracking/setdata', 'Tracking@setData');
+//});
